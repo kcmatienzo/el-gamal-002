@@ -11,7 +11,7 @@
 }
 
 body {
-  background: #e2e2e2;
+  background: #fff6f6;
 }
 
 #header {
@@ -84,7 +84,7 @@ body {
   line-height: 30px;
   color: #000000;
   letter-spacing: 0.8px;
-  font-size: 20px;
+  font-size: 17px;
   padding-bottom: 25px;
 }
 
@@ -117,7 +117,7 @@ body {
   border-bottom: 8px #6e7271 solid;
   border-right: 8px #6e7271 solid;
   margin-bottom: 3em;
-  background-color: #acad94;
+  background-color: #afc8ad;
 }
 
 .alice-column {
@@ -148,6 +148,7 @@ body {
 
 .title {
   color: #333333;
+
   font-size: 35px;
   line-height: 45px;
   font-weight: 700;
@@ -206,7 +207,7 @@ label {
 .machine {
   width: 75%;
   margin: 0 auto;
-  background: #acad94;
+  background: #afc8ad;
   border: 1px solid #ddd;
   border-radius: 10px;
 }
@@ -245,7 +246,7 @@ label {
   font-weight: bold;
   margin: 10px 0;
   padding: 10px;
-  background: #acad94;
+  background: #afc8ad;
 }
 
 .errorInfo {
