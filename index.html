@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+    <title>El Gamal Algorithm</title>
+    <!-- <link type="text/css" rel="stylesheet" href="css/normalize.css" /> -->
+    <link type="text/css" rel="stylesheet" href="css/style.css" />
+    <!-- <link type="text/css" rel="stylesheet" href="css/TangleKit.css" /> -->
+
+    <script data-main="js/main" src="js/3rdparty/require.js"></script>
+    <script
+      type="text/javascript"
+      src="js/3rdparty/TangleKit/sprintf.js"
+    ></script>
+    <script src="js/elgamal.js"></script>
+    <script src="js/machines.js"></script>
+  </head>
+  <body>
+    <nav id="header">
+      <div id="title">El-Gamal Algorithm</div>
+    </nav>
+
+    <div id="wrapper">
+      <div id="introduction" class="block">
+        <h1 class="title">Introduction</h1>
+        <p class="text">
+          The purpose of encryption algorithms is to help people exchange secret
+          or confidential information with each other using the information
+          equivalent of physical keys. To make the discussion easier, we will
+          say that Bob wants to send a message to Alice without Eve being able
+          to see it. With a symmetric encryption algorithm, the key used to
+          encrypt a message is the same as the key used to decrypt it. This is
+          analogous to Bob placing his message in a box, closing it, and sending
+          it to Alice to open. The big problem with this approach is that Alice
+          needs a copy of the key that Bob used. This is a chicken and egg
+          problem: in order to communicate securely with each other, Alice and
+          Bob must have already exchanged secret information. If Bob ever sends
+          the key to Alice, Eve can easily intercept it and use it to read her
+          messages. In theory, Bob could give Alice the key in person, but in
+          practice this doesn't work very well. Imagine having to go to a
+          company's office to give them your credit card number before you can
+          buy something online. This is terribly inconvenient!
+          <br />
+          <br />
+          The solution to the problem is asymmetric encryption algorithms, which
+          do not use the same key for encryption and decryption. Continuing our
+          analogy with boxes and physical keys, Alice sends the unlocked lock to
+          everyone who wants to send her messages. Bob puts his message in the
+          box, locks it with Alice's lock, and sends it back to Alice. Since
+          Alice is the only one with the key to the lock, only she can read the
+          message once it is in the locked box. The El Gamal algorithm is an
+          example of an information algorithm that works on this principle. The
+          El Gamal cryptographic system is based on the complexity of the
+          problem of calculating discrete logarithms in a finite field. There
+          are efficient algorithms for raising a number to a power in a finite
+          field, but restoring the exponent (discrete logarithm) from a known
+          base and its power is a complex mathematical problem. To date, there
+          is not a single effective algorithm for calculating discrete
+          logarithms of large numbers.
+        </p>
+      </div>
+
+      <div id="theory-chipher" class="block">
+        <h1 class="title">Encryption / Decryption</h1>
+        <p class="text">
+          Alice wants people to be able to send her secret messages, so she
+          creates a public key %%(p,g,y)%%, which she shares with the world and
+          her personal key %%x%% which she never tells anyone. Bob wants to send
+          Alice a secret message, so he uses Alice's public key and a one-time
+          session key %%k%%, creates ciphertext %%(a, b)%%.<br />
+          Here's how it works:
+        </p>
+        <div class="example">
+          <p class="alice-column-start">
+            <img src="images/Alice.png" class="alice" alt="Alice" />
+          </p>
+          <p class="bob-column-start">
+            <img src="images/Bob.png" class="bob" alt="Bob" />
+          </p>
+          <p class="alice-column">1. Alice chooses a prime number %%p%%</p>
+          <p class="alice-column">
+            2. Selects an integer %%g%%, such that, %%g%% - primitive root
+            %%p%%, which generates a cyclic subgroup %%\mathbb{Z}_p^*%% order
+            %%n%%
+          </p>
+          <p class="alice-column">
+            3. Selects a random secret key, such that %%1 \leq x \leq n-1%%.
+          </p>
+          <p class="alice-column">4. Calculates %%y = g^x \pmod{p}%%</p>
+          <p class="alice-column send-right">
+            5. Publishes the public key%%(p,g,y)%%.
+          </p>
+          <p class="bob-column">1. Bob receives Alice's key %%(p,g,y)%%.</p>
+          <p class="bob-column">
+            2. Bob chooses random %%k%%, such that %%1 \leq k \leq n-1%%
+          </p>
+          <p class="bob-column">
+            3. Creates a message %%m%%, such that %%1 \leq m \leq p-1%%. If the
+            message is too large, Bob splits the message into parts and encrypts
+            them separately.
+          </p>
+          <p class="bob-column">
+            4. Calculates numbers %%a = g^k \pmod{p}%%, %%b = m y^k \pmod{p}%%.
+          </p>
+          <p class="bob-column send-left">
+            5. Bob publishes the ciphertext %%(a, b)%%.
+          </p>
+          <p class="alice-column">6. Alice sees the ciphertext %%(a, b)%%.</p>
+          <p class="alice-column">
+            7. Decrypts the message %%m = b&nbsp;(a^{x})^{-1} \pmod{p}%%.
+          </p>
+        </div>
+      </div>
+
+      <div id="interactive" class="block">
+        <h1 class="title">Interactive encryption scheme</h1>
+        <p class="text">
+          This is a small application that you can use to try El Gamal
+          encryption.<br />
+          This is a toy implementation, so please don't even try to use large
+          numbers
+        </p>
+        <div class="row">
+          <div class="col">
+            <div class="machine" id="aliceMachine">
+              <div class="machine-title-panel">
+                <h3 class="machine-title">Alice</h3>
+              </div>
+              <div class="machine-main">
+                <ul class="errors"></ul>
+                <form>
+                  <div class="form-group" id="prime">
+                    <label for="txtPrime"> Enter a prime number %%p%% </label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="txtPrime" />
+                      <button id="getGenerators" class="btn" type="button">
+                        Enter
+                      </button>
+                    </div>
+                    <span class="errorInfo">This number is not prime</span>
+                  </div>
+
+                  <div class="form-group" id="generator">
+                    <label for="txtG"> Choose a primitive root %%g%% </label>
+                    <div id="generatorInfo">
+                      Click on the button above to see a list of primitive roots
+                    </div>
+                    <div id="selectG"></div>
+                    <span class="errorInfo">Error</span>
+                  </div>
+
+                  <div class="form-group" id="privateKey">
+                    <label for="txtPrivateKey">
+                      Enter your private key %%x%%
+                    </label>
+                    <div class="input-group">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="txtPrivateKey"
+                      />
+                      <button
+                        id="getRandomPrivateKey"
+                        class="btn"
+                        type="button"
+                      >
+                        Random
+                      </button>
+                    </div>
+                    <span class="errorInfo"
+                      >The number must be greater than %%0%% and less
+                      %%p-1%%</span
+                    >
+                  </div>
+
+                  <div class="form-group">
+                    <button id="getPublicKey" class="btn" type="button">
+                      Generate and Publish Public Key
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="message">
+                <div id="messageDisplay">
+                  <div class="inbox-empty" style="display: block">
+                    You have no messages.
+                  </div>
+                  <div class="inbox-has-message" style="display: none">
+                    <div>
+                      You have received a message from Bob.
+                      <button
+                        id="decrypt"
+                        class="btn btn-primary btn-sm"
+                        type="button"
+                      >
+                        Decipher
+                      </button>
+                    </div>
+                    <div
+                      class="data"
+                      style="font-weight: bold; margin-top: 10px"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="extrainfo"></div>
+            </div>
+          </div>
+          <!-- Data Table -->
+
+          <div class="col">
+            <div id="wire">
+              <div class="wire-data">
+                <div id="keyDisplay" class="display">
+                  Public Key<br />
+                  <span class="data">---</span>
+                </div>
+
+                <div id="encryptedMsg" class="display">
+                  Encrypted Message<br />
+                  <span class="data">---</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sender (Bob)-->
+
+          <div class="col">
+            <div class="machine" id="bobMachine">
+              <div class="machine-title-panel">
+                <h3 class="machine-title">Bob</h3>
+              </div>
+              <div class="machine-main">
+                <form>
+                  <div class="form-group" id="encryptPrivate">
+                    <label for="txtEncryptPrivate">
+                      Enter the private key for encryption %%k%%
+                    </label>
+                    <div class="input-group">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="txtEncryptPrivate"
+                      />
+                      <div class="input-group-btn">
+                        <button
+                          id="getRandomEncyptKey"
+                          class="btn"
+                          type="button"
+                        >
+                          Random
+                        </button>
+                      </div>
+                    </div>
+                    <span class="errorInfo"
+                      >The number must be greater %%0%% and less %%p-1%%</span
+                    >
+                  </div>
+
+                  <div class="form-group" id="message">
+                    <label for="txtMessage"> Message %%m%% </label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="txtMessage" />
+                      <button id="encrypt" class="btn" type="button">
+                        Send
+                      </button>
+                    </div>
+                    <span class="errorInfo"
+                      >The number must be greater %%0%% and less %%p%%.</span
+                    >
+                  </div>
+                </form>
+                <div class="extrainfo"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="theory-signature" class="block">
+        <h1 class="title">Working in signature mode</h1>
+        <p class="text">
+          Now let's look at how the algorithm works in signature mode.
+        </p>
+        <h2 class="subtitle">Signing messages</h2>
+        <p class="text">
+          To sign a message %%m%% the following operations are performed: <br />
+          1) A random number is selected %%1 < k < p-1%% coprime with %%p-1%% -
+          one-time key<br />
+          2) Calculated %%r = g^k \pmod{p}%%<br />
+          3) Calculated %%s = (m - xr)k^{-1} \pmod{p-1}%%<br />
+          4) Signature of the message %%m%% is a couple %%(r,s)%% <br />
+        </p>
+        <h2 class="subtitle">Signature Verification</h2>
+        <p class="text">
+          Knowing the public key %%(p,g,y)%%, signature %%(r,s)%% messages %%m%%
+          is checked as follows: <br />
+          1) The satisfiability of the conditions is checked: %%0 < r < p%% and
+          %%0 < s < p-1%%
+          <br />
+          2) The signature is considered correct if the comparison is performed:
+          %%y^r \cdot r^s \equiv g^m (mod p)%%<br />
+          <br />
+        </p>
+      </div>
+
+      <div id="interactive-2" class="block">
+        <h1 class="title">Interactive signature scheme</h1>
+        <p class="text">
+          This is a small application that you can use to try out the El Gamal
+          algorithm in signature mode.<br />
+          This is a toy implementation, so please don't even try to use large
+          numbers))
+        </p>
+        <div class="row">
+          <div class="col">
+            <div class="machine" id="bobMachine2">
+              <div class="machine-title-panel">
+                <h3 class="machine-title">Bob</h3>
+              </div>
+              <div class="machine-main">
+                <ul class="errors"></ul>
+                <form>
+                  <div class="form-group" id="prime2">
+                    <label for="txtPrime"> Enter a prime number: %%p%% </label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="txtPrime2" />
+                      <button id="getGenerators2" class="btn" type="button">
+                        Enter
+                      </button>
+                    </div>
+                    <span class="errorInfo">This number is not prime</span>
+                  </div>
+
+                  <div class="form-group" id="generator2">
+                    <label for="txtG"> Choose a primitive root %%g%% </label>
+                    <div id="generatorInfo2">
+                      Click on the button above to see a list of primitive roots
+                    </div>
+                    <div id="selectG2"></div>
+                    <span class="errorInfo">Error</span>
+                  </div>
+
+                  <div class="form-group" id="privateKey2">
+                    <label for="txtPrivateKey">
+                      Enter your private key %%x%%
+                    </label>
+                    <div class="input-group">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="txtPrivateKey2"
+                      />
+                      <button
+                        id="getRandomPrivateKey2"
+                        class="btn"
+                        type="button"
+                      >
+                        Random
+                      </button>
+                    </div>
+                    <span class="errorInfo"
+                      >The number must be greater %%0%% and less %%p-1%%</span
+                    >
+                  </div>
+
+                  <div class="form-group">
+                    <button id="getPublicKey2" class="btn" type="button">
+                      Generate and Publish Public Key
+                    </button>
+                  </div>
+
+                  <div class="form-group" id="encryptPrivate2">
+                    <label for="txtEncryptPrivate">
+                      Enter one-time signing key %%k%%
+                    </label>
+                    <div class="input-group">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="txtEncryptPrivate2"
+                      />
+                      <div class="input-group-btn">
+                        <button
+                          id="getRandomEncyptKey2"
+                          class="btn"
+                          type="button"
+                        >
+                          Random
+                        </button>
+                      </div>
+                    </div>
+                    <span class="errorInfo"
+                      >The number must be greater %%0%% and less %%p-1%%</span
+                    >
+                  </div>
+
+                  <div class="form-group" id="message2">
+                    <label for="txtMessage"> Message %%m%% </label>
+                    <div class="input-group">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="txtMessage2"
+                      />
+                      <button id="encrypt2" class="btn" type="button">
+                        Sign
+                      </button>
+                    </div>
+                    <span class="errorInfo"
+                      >Teh number must be greater %%0%% and less %%p%%.</span
+                    >
+                  </div>
+                </form>
+              </div>
+
+              <div class="extrainfo"></div>
+            </div>
+          </div>
+
+          <!-- Middle table -->
+
+          <div class="col">
+            <div id="wire2">
+              <div class="wire-data">
+                <div id="keyDisplay2" class="display">
+                  Public Key<br />
+                  <span class="data">-</span>
+                </div>
+
+                <div id="encryptedMsg2" class="display">
+                  Message Signature<br />
+                  <span class="data">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alice / Right Side -->
+
+          <div class="col">
+            <div class="machine" id="aliceMachine2">
+              <div class="machine-title-panel">
+                <h3 class="machine-title">Alice</h3>
+              </div>
+
+              <div class="message">
+                <div id="messageDisplay2">
+                  <div class="inbox-empty" style="display: block">
+                    You have no messages.
+                  </div>
+                  <div class="inbox-has-message" style="display: none">
+                    <div>
+                      You have received a message.
+                      <button
+                        id="decrypt2"
+                        class="btn btn-primary btn-sm"
+                        type="button"
+                      >
+                        You received a message from Bob
+                      </button>
+                    </div>
+                    <div
+                      class="data"
+                      style="font-weight: bold; margin-top: 10px"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              <div class="extrainfo"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <p>Aprilson Anies</p>
+      <p>Josh Culbengan</p>
+      <p>Kryselle Matienzo</p>
+      <p>Prayag Piya</p>
+      <p>Vraj Patel</p>
+      <p id="copyright">©&nbsp;Copyright 2023</p>
+    </footer>
+    <script src="js/elgamal.js"></script>
+    <script src="js/machines.js"></script>
+  </body>
+</html>
