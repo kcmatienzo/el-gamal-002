@@ -26,6 +26,25 @@ var findElementsByClass = function (parentElement, className) {
   }
 };
 
+function populateEuclideanTable(rows) {
+  var tableBody = document.getElementById('eclidieanTable').getElementsByTagName('tbody')[0];
+
+  tableBody.innerHTML = '';
+
+  rows.forEach(function (row, index) {
+      var newRow = tableBody.insertRow();
+      newRow.insertCell(0).textContent = index + 1;
+      newRow.insertCell(1).textContent = row.q;
+      newRow.insertCell(2).textContent = row.R1;
+      newRow.insertCell(3).textContent = row.R2;
+      newRow.insertCell(4).textContent = row.r;
+      newRow.insertCell(5).textContent = row.t1;
+      newRow.insertCell(6).textContent = row.t2;
+      newRow.insertCell(7).textContent = row.t;
+  });
+}
+
+
 var bind = (function (window, document) {
   if (document.addEventListener) {
     return function (elem, type, cb) {

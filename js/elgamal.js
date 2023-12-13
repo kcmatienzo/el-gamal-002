@@ -1,6 +1,27 @@
 /*
     El-Gamal function
 */
+const extendedEuclidean = (largeNumber, number) => {
+  var rows = [];
+  var rOne = largeNumber,
+      rTwo = number, 
+      t1 = 0, 
+      t2 = 1,
+      t;
+
+  while (rTwo !== 0) {
+    var q = Math.floor(rOne / rTwo);
+    var reminder = rOne % rTwo;
+    t = t1 - t2 * q;
+    rows.push({ q, R1: rOne, R2: rTwo, r: reminder, t1, t2, t });
+    rOne = rTwo;
+    rTwo = reminder;
+    t1 = t2;
+    t2 = t;
+  }  
+  return rows;
+};
+
 var ElGamal = (function () {
   var extendedEuclid,
     powmod,

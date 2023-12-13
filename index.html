@@ -314,6 +314,25 @@
           This is a toy implementation, so please don't even try to use large
           numbers))
         </p>
+        <h2 id="excludian" hidden>Extended Excludian Algorithm</h2>
+        <table id="eclidieanTable" style="visibility : hidden">
+          <thead>
+            <tr>
+              <th>Sn</th>
+              <th>q</th>
+              <th>R1</th>
+              <th>R2</th>
+              <th>r</th>
+              <th>T1</th>
+              <th>T2</th>
+              <th>T</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+          </tbody>
+        </table>
+        </table>
         <div class="row">
           <div class="col">
             <div class="machine" id="bobMachine2">
@@ -382,21 +401,12 @@
                         class="form-control"
                         id="txtEncryptPrivate2"
                       />
-                      <div class="input-group-btn">
-                        <button
-                          id="getRandomEncyptKey2"
-                          class="btn"
-                          type="button"
-                        >
-                          Random
-                        </button>
-                      </div>
                     </div>
                     <span class="errorInfo"
                       >The number must be greater %%0%% and less %%p-1%%</span
                     >
                   </div>
-
+                  <button class="btn" type="button" onclick="showTable()">Show Extended Excludian</button>
                   <div class="form-group" id="message2">
                     <label for="txtMessage"> Message %%m%% </label>
                     <div class="input-group">
@@ -485,5 +495,13 @@
     </footer>
     <script src="js/elgamal.js"></script>
     <script src="js/machines.js"></script>
+    <script>
+      function showTable(event) {
+        document.getElementById("excludian").hidden = false;
+        document.getElementById('eclidieanTable').style.visibility  = "visible";
+        var result = extendedEuclidean(document.getElementById("txtPrime2").value-1, document.getElementById("txtPrivateKey2").value);
+        populateEuclideanTable(result)
+      }
+    </script>
   </body>
 </html>

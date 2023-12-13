@@ -14,6 +14,22 @@ body {
   background: #e2e2e2;
 }
 
+table {
+  border-collapse: collapse;
+  width: 50%;
+  margin: 20px;
+}
+
+th, td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
 #header {
   width: 100%;
   height: 9%;
